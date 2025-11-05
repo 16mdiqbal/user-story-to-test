@@ -1,13 +1,34 @@
 import { defineConfig, loadEnv } from 'vite'
+import path from 'node:path'
 import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  // Load VITE_* vars from env files so the dev server proxy sees them
-  const env = loadEnv(mode, process.cwd(), '')
-  const target = env.VITE_JIRA_BASE_URL
+  // Load env from repo root and frontend folder, then merge
+  const rootDir = path.resolve(__dirname, '..')
+  const rootEnv = loadEnv(mode, rootDir, '')
+  const feEnv = loadEnv(mode, process.cwd(), '')
+  const merged = { ...rootEnv, ...feEnv }
+
+  // Derive VITE_* values from either VITE_* or root JIRA_* keys to allow single .env at repo root
+  const VITE_JIRA_BASE_URL = merged.VITE_JIRA_BASE_URL || merged.JIRA_BASE_URL || ''
+  const VITE_JIRA_AUTH_TYPE = merged.VITE_JIRA_AUTH_TYPE || merged.JIRA_AUTH_TYPE || 'basic'
+  const VITE_JIRA_EMAIL = merged.VITE_JIRA_EMAIL || merged.JIRA_EMAIL || ''
+  const VITE_JIRA_API_TOKEN = merged.VITE_JIRA_API_TOKEN || merged.JIRA_API_TOKEN || ''
+  const VITE_JIRA_BEARER = merged.VITE_JIRA_BEARER || merged.JIRA_BEARER || ''
+  const VITE_JIRA_ACCEPTANCE_FIELD = merged.VITE_JIRA_ACCEPTANCE_FIELD || merged.JIRA_ACCEPTANCE_FIELD || ''
+
+  const target = VITE_JIRA_BASE_URL
   return {
     plugins: [react()],
+    define: {
+      'import.meta.env.VITE_JIRA_BASE_URL': JSON.stringify(VITE_JIRA_BASE_URL),
+      'import.meta.env.VITE_JIRA_AUTH_TYPE': JSON.stringify(VITE_JIRA_AUTH_TYPE),
+      'import.meta.env.VITE_JIRA_EMAIL': JSON.stringify(VITE_JIRA_EMAIL),
+      'import.meta.env.VITE_JIRA_API_TOKEN': JSON.stringify(VITE_JIRA_API_TOKEN),
+      'import.meta.env.VITE_JIRA_BEARER': JSON.stringify(VITE_JIRA_BEARER),
+      'import.meta.env.VITE_JIRA_ACCEPTANCE_FIELD': JSON.stringify(VITE_JIRA_ACCEPTANCE_FIELD),
+    },
     server: {
       port: 5173,
       host: true,
