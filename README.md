@@ -26,21 +26,12 @@ npm install
 ```
 
 ### 2) Environment variables
-Create a `.env` at repo root for the backend and smoke tests:
+Create and fill in your environment files locally:
 
-Copy `.env.example` to `.env` and fill in values locally. Do NOT commit `.env`.
+- Root backend/smoke test: `.env`
+- Frontend proxy: `frontend/.env.local`
 
-```bash
-cp .env.example .env
-```
-
-For the frontend proxy, copy `frontend/.env.local.example` to `frontend/.env.local` and set credentials (never commit):
-
-```bash
-cp frontend/.env.local.example frontend/.env.local
-```
-
-Note: `.env` and `.env.local` are ignored by git.
+Note: `.env` and `.env.local` are ignored by git by default.
 
 ### 3) Run dev servers
 
