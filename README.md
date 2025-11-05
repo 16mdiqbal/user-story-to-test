@@ -8,6 +8,7 @@ Convert Jira user stories into structured test cases with a small full‑stack a
 - Generate test cases using the backend LLM endpoint
 - "Start Over" button to reset form after generation
 - Full-screen loading overlay while test cases are generated
+- Automatic scroll to the generated results once ready
 
 ## Tech stack
 - Frontend: Vite + React + TypeScript
@@ -29,9 +30,9 @@ npm install
 ### 2) Environment variables
 Create and fill in your environment files locally. This repo supports a 3-tier env layout:
 
-- Common vars: `.env` (repo root)
-- Backend-only overrides: `backend/.env`
-- Frontend-only overrides: `frontend/.env.local`
+- Common vars: create `.env` in the repo root (ignored by git)
+- Backend-only overrides: `backend/.env` (optional, also ignored)
+- Frontend-only overrides: `frontend/.env.local` (optional, also ignored)
 
 Frontend reads Jira settings by mirroring the backend `JIRA_*` variables into `VITE_*` keys so you can optionally forward Basic auth during local development:
 
@@ -54,7 +55,7 @@ VITE_JIRA_ACCEPTANCE_FIELD=
 
 - `VITE_JIRA_FORWARD_BASIC` forwards the Basic auth header through the backend proxy when server-side credentials are missing.
 - Set `VITE_JIRA_DIRECT=true` only if you plan to call Jira directly from the browser; CORS may block it, so the backend proxy is recommended.
-- In real projects, keep `.env` files out of version control. They are tracked here for demonstration purposes only.
+- Example files are ignored by default, so create your own `.env` files locally to keep credentials out of version control.
 
 ### 3) Run dev servers
 
@@ -87,7 +88,7 @@ It prints the issue key, summary, and whether the description contains User Stor
 - `npm run -w frontend test:jira` — Jira smoke test
 
 ## Security notes
-- Treat your `.env` files as secrets in real deployments (they are tracked here only for demo purposes).
+- Keep your `.env` files outside version control; populate them locally with real credentials.
 - Jira auth defaults to Basic (email + API token) but Bearer tokens are supported.
 - The Express backend proxies all Jira traffic; optional Basic-auth forwarding from the browser should only be used during local development.
 
