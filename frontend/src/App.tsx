@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { generateTests } from './api'
 import { GenerateRequest, GenerateResponse, TestCase } from './types'
 import { fetchJiraIssue } from './jira'
@@ -52,6 +52,7 @@ function App() {
   const [jiraLoading, setJiraLoading] = useState<boolean>(false)
   const [jiraError, setJiraError] = useState<string | null>(null)
   const jiraInputRef = useRef<HTMLInputElement>(null)
+  const resultsRef = useRef<HTMLDivElement | null>(null)
 
   const toggleTestCaseExpansion = (testCaseId: string) => {
     const newExpanded = new Set(expandedTestCases)
@@ -111,6 +112,15 @@ function App() {
   }
 
   // No save settings; values come from env
+
+  useEffect(() => {
+    if (!isLoading && results && results.cases.length > 0) {
+      const node = resultsRef.current
+      if (node) {
+        node.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }
+  }, [isLoading, results])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -597,7 +607,7 @@ function App() {
         )}
 
         {results && (
-          <div className="results-container">
+          <div className="results-container" ref={resultsRef}>
             <div className="results-header">
               <h2 className="results-title">Generated Test Cases</h2>
               <div className="results-meta">
