@@ -3,10 +3,11 @@
 Convert Jira user stories into structured test cases with a small full‑stack app (Vite React frontend + Express/TypeScript backend).
 
 ## Features
-- Fetch Jira issue details from the frontend only (via Vite dev proxy)
+- Fetch Jira issue details through the backend proxy (no Jira auth exposed in the browser)
 - Parse description into "User Story" and "Acceptance Criteria" sections
 - Generate test cases using the backend LLM endpoint
 - "Start Over" button to reset form after generation
+- Full-screen loading overlay while test cases are generated
 
 ## Tech stack
 - Frontend: Vite + React + TypeScript
@@ -32,23 +33,28 @@ Create and fill in your environment files locally. This repo supports a 3-tier e
 - Backend-only overrides: `backend/.env`
 - Frontend-only overrides: `frontend/.env.local`
 
-Frontend reads Jira settings from either VITE_* or maps from root JIRA_* keys:
+Frontend reads Jira settings by mirroring the backend `JIRA_*` variables into `VITE_*` keys so you can optionally forward Basic auth during local development:
 
 ```
-# Either in frontend/.env.local or root .env (using JIRA_* keys)
+# Either in frontend/.env.local or root .env
+JIRA_BASE_URL=https://your-domain.atlassian.net
+JIRA_AUTH_TYPE=basic
+JIRA_EMAIL=you@example.com
+JIRA_API_TOKEN=your_api_token
+
 VITE_JIRA_BASE_URL=https://your-domain.atlassian.net
 VITE_JIRA_AUTH_TYPE=basic
 VITE_JIRA_EMAIL=you@example.com
 VITE_JIRA_API_TOKEN=your_api_token
+VITE_JIRA_FORWARD_BASIC=true
+
 # Optional custom field for Acceptance Criteria (ADF or text)
 VITE_JIRA_ACCEPTANCE_FIELD=
-
-# Optional: call Jira directly from the browser instead of using the dev proxy
-# CAUTION: may hit CORS; default is false which uses the /jira dev proxy
-VITE_JIRA_DIRECT=false
 ```
 
-Note: `.env`, `backend/.env`, and `frontend/.env.local` are ignored by git by default.
+- `VITE_JIRA_FORWARD_BASIC` forwards the Basic auth header through the backend proxy when server-side credentials are missing.
+- Set `VITE_JIRA_DIRECT=true` only if you plan to call Jira directly from the browser; CORS may block it, so the backend proxy is recommended.
+- In real projects, keep `.env` files out of version control. They are tracked here for demonstration purposes only.
 
 ### 3) Run dev servers
 
@@ -57,14 +63,12 @@ npm run dev
 ```
 
 - Backend: http://localhost:8080
-- Frontend: http://localhost:5173
-
-The frontend dev proxy is enabled when `VITE_JIRA_BASE_URL` is present at frontend startup. Requests go to `/jira/...` and are proxied to your Jira base URL. To bypass the proxy and call Jira directly (useful if you prefer seeing the full Jira URL in the Network tab), set `VITE_JIRA_DIRECT=true` — but note this can be blocked by CORS depending on your Jira configuration.
+- Frontend: http://localhost:5173 (falls back to the next open port if 5173 is busy)
 
 ### 4) Frontend Jira fetch
 - Enter a Jira ID (e.g., `PROJ-123`) and click "Fetch Jira details"
 - The UI populates Story Title, Description, and Acceptance Criteria
-- Click "Generate" to produce test cases
+- Click "Generate" to produce test cases (a loading overlay indicates progress)
 - Use "Start Over" in the results header to reset and enter another Jira ID
 
 ### 5) Smoke test (optional)
@@ -83,9 +87,9 @@ It prints the issue key, summary, and whether the description contains User Stor
 - `npm run -w frontend test:jira` — Jira smoke test
 
 ## Security notes
-- Do not commit real API tokens. In this test repo, keys are blank in committed env files.
-- Jira auth is basic (email + API token). Bearer auth isn’t used.
-- The Vite proxy passes the Authorization header through to Jira in development only. For production, configure a proper backend proxy.
+- Treat your `.env` files as secrets in real deployments (they are tracked here only for demo purposes).
+- Jira auth defaults to Basic (email + API token) but Bearer tokens are supported.
+- The Express backend proxies all Jira traffic; optional Basic-auth forwarding from the browser should only be used during local development.
 
 ## License
 MIT
