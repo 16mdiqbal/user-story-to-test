@@ -15,7 +15,6 @@ export default defineConfig(({ mode }) => {
   const VITE_JIRA_AUTH_TYPE = merged.VITE_JIRA_AUTH_TYPE || merged.JIRA_AUTH_TYPE || 'basic'
   const VITE_JIRA_EMAIL = merged.VITE_JIRA_EMAIL || merged.JIRA_EMAIL || ''
   const VITE_JIRA_API_TOKEN = merged.VITE_JIRA_API_TOKEN || merged.JIRA_API_TOKEN || ''
-  const VITE_JIRA_BEARER = merged.VITE_JIRA_BEARER || merged.JIRA_BEARER || ''
   const VITE_JIRA_ACCEPTANCE_FIELD = merged.VITE_JIRA_ACCEPTANCE_FIELD || merged.JIRA_ACCEPTANCE_FIELD || ''
 
   const target = VITE_JIRA_BASE_URL
@@ -26,7 +25,6 @@ export default defineConfig(({ mode }) => {
       'import.meta.env.VITE_JIRA_AUTH_TYPE': JSON.stringify(VITE_JIRA_AUTH_TYPE),
       'import.meta.env.VITE_JIRA_EMAIL': JSON.stringify(VITE_JIRA_EMAIL),
       'import.meta.env.VITE_JIRA_API_TOKEN': JSON.stringify(VITE_JIRA_API_TOKEN),
-      'import.meta.env.VITE_JIRA_BEARER': JSON.stringify(VITE_JIRA_BEARER),
       'import.meta.env.VITE_JIRA_ACCEPTANCE_FIELD': JSON.stringify(VITE_JIRA_ACCEPTANCE_FIELD),
     },
     server: {

@@ -66,7 +66,8 @@ It prints the issue key, summary, and whether the description contains User Stor
 - `npm run -w frontend test:jira` — Jira smoke test
 
 ## Security notes
-- Do not commit real API tokens or `.env*` files. `.gitignore` is configured to exclude them.
+- Do not commit real API tokens. In this test repo, keys are blank in committed env files.
+- Jira auth is basic (email + API token). Bearer auth isn’t used.
 - The Vite proxy passes the Authorization header through to Jira in development only. For production, configure a proper backend proxy.
 
 ## License
