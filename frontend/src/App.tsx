@@ -300,11 +300,45 @@ function App() {
           margin-bottom: 20px;
         }
         
+        .loading-overlay {
+          position: fixed;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          background: rgba(44, 62, 80, 0.25);
+          backdrop-filter: blur(3px);
+          z-index: 1000;
+          padding: 20px;
+        }
+
         .loading {
-          text-align: center;
-          padding: 40px;
-          color: #666;
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 24px 32px;
+          background: white;
+          border-radius: 12px;
+          box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+          color: #2c3e50;
           font-size: 18px;
+          font-weight: 600;
+          letter-spacing: 0.2px;
+        }
+        
+        .loading-spinner {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          border: 3px solid rgba(52, 152, 219, 0.2);
+          border-top-color: #3498db;
+          animation: spin 0.9s linear infinite;
+        }
+        
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
         }
         
         .results-container {
@@ -554,8 +588,11 @@ function App() {
         )}
 
         {isLoading && (
-          <div className="loading">
-            Generating test cases...
+          <div className="loading-overlay">
+            <div className="loading" role="status" aria-live="polite">
+              <span className="loading-spinner" />
+              <span>Generating test cases…</span>
+            </div>
           </div>
         )}
 

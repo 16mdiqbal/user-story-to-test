@@ -26,12 +26,29 @@ npm install
 ```
 
 ### 2) Environment variables
-Create and fill in your environment files locally:
+Create and fill in your environment files locally. This repo supports a 3-tier env layout:
 
-- Root backend/smoke test: `.env`
-- Frontend proxy: `frontend/.env.local`
+- Common vars: `.env` (repo root)
+- Backend-only overrides: `backend/.env`
+- Frontend-only overrides: `frontend/.env.local`
 
-Note: `.env` and `.env.local` are ignored by git by default.
+Frontend reads Jira settings from either VITE_* or maps from root JIRA_* keys:
+
+```
+# Either in frontend/.env.local or root .env (using JIRA_* keys)
+VITE_JIRA_BASE_URL=https://your-domain.atlassian.net
+VITE_JIRA_AUTH_TYPE=basic
+VITE_JIRA_EMAIL=you@example.com
+VITE_JIRA_API_TOKEN=your_api_token
+# Optional custom field for Acceptance Criteria (ADF or text)
+VITE_JIRA_ACCEPTANCE_FIELD=
+
+# Optional: call Jira directly from the browser instead of using the dev proxy
+# CAUTION: may hit CORS; default is false which uses the /jira dev proxy
+VITE_JIRA_DIRECT=false
+```
+
+Note: `.env`, `backend/.env`, and `frontend/.env.local` are ignored by git by default.
 
 ### 3) Run dev servers
 
@@ -42,7 +59,7 @@ npm run dev
 - Backend: http://localhost:8080
 - Frontend: http://localhost:5173
 
-The frontend dev proxy is enabled when `VITE_JIRA_BASE_URL` is present at frontend startup. Requests go to `/jira/...` and are proxied to your Jira base URL.
+The frontend dev proxy is enabled when `VITE_JIRA_BASE_URL` is present at frontend startup. Requests go to `/jira/...` and are proxied to your Jira base URL. To bypass the proxy and call Jira directly (useful if you prefer seeing the full Jira URL in the Network tab), set `VITE_JIRA_DIRECT=true` — but note this can be blocked by CORS depending on your Jira configuration.
 
 ### 4) Frontend Jira fetch
 - Enter a Jira ID (e.g., `PROJ-123`) and click "Fetch Jira details"
