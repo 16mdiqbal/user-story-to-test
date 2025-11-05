@@ -28,32 +28,16 @@ npm install
 ### 2) Environment variables
 Create a `.env` at repo root for the backend and smoke tests:
 
-```ini
-PORT=8080
-CORS_ORIGIN=http://localhost:5173
+Copy `.env.example` to `.env` and fill in values locally. Do NOT commit `.env`.
 
-groq_API_BASE=https://api.groq.com/openai/v1
-# Provide your real key here for local use only
-# groq_API_KEY=...
-
-groq_MODEL=openai/gpt-oss-120b
-
-# Jira (used by the Node smoke test only)
-JIRA_BASE_URL=https://your-domain.atlassian.net
-JIRA_AUTH_TYPE=basic
-JIRA_EMAIL=you@example.com
-JIRA_API_TOKEN=your_api_token
-JIRA_ISSUE_KEY=PROJ-123
+```bash
+cp .env.example .env
 ```
 
-Create a `frontend/.env.local` for the browser + proxy (never commit secrets):
+For the frontend proxy, copy `frontend/.env.local.example` to `frontend/.env.local` and set credentials (never commit):
 
-```ini
-VITE_JIRA_BASE_URL=https://your-domain.atlassian.net
-VITE_JIRA_AUTH_TYPE=basic
-VITE_JIRA_EMAIL=you@example.com
-VITE_JIRA_API_TOKEN=your_api_token
-# Optional: VITE_JIRA_ACCEPTANCE_FIELD=customfield_12345
+```bash
+cp frontend/.env.local.example frontend/.env.local
 ```
 
 Note: `.env` and `.env.local` are ignored by git.
