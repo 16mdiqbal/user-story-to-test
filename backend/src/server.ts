@@ -4,10 +4,13 @@ import dotenv from 'dotenv'
 import path from 'path'
 import { generateRouter } from './routes/generate'
 
-// Load environment variables from root directory
-const envPath = path.join(__dirname, '../../.env')
-console.log(`Loading .env from: ${envPath}`)
-dotenv.config({ path: envPath })
+// Load environment variables from root and backend directories (backend overrides root)
+const rootEnvPath = path.join(__dirname, '../../.env')
+const backendEnvPath = path.join(__dirname, '../.env')
+console.log(`Loading root .env from: ${rootEnvPath}`)
+dotenv.config({ path: rootEnvPath })
+console.log(`Loading backend .env from: ${backendEnvPath}`)
+dotenv.config({ path: backendEnvPath, override: true })
 
 // Debug environment variables
 console.log('Environment variables loaded:')
